@@ -1,8 +1,8 @@
 #Packager: Dimitris Tzemos <dijemos~at~gmail~dot~com>
 
 pkgname=install-upgrade-kernel-ext-usb
-pkgver=1.1.1
-pkgrel=2dj
+pkgver=2.0
+pkgrel=1dj
 arch=noarch
 source=(install-upgrade-kernel-ext-usb-$pkgver.tar.gz)
 docs=("readme" "copying" "authors")
