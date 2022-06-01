@@ -17,7 +17,7 @@ sudo spkg install-upgrade-kernel-ext-usb-3.0-noarch-1dj.txz
 Running
 sudo install-upgrade-kernel with no parameters will get the following help screen.
 
-USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [huge|generic] [10] [ext4] [/dev/sdb1]
+USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [huge|generic] [10] [ext4]
 
 OPTIONS:
    install     Install huge or generic kernel
