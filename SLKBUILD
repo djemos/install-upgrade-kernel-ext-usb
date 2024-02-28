@@ -4,7 +4,7 @@ pkgname=install-upgrade-kernel-ext-usb
 pkgver=3.0
 pkgrel=1dj
 arch=noarch
-source=(install-upgrade-kernel-ext-usb-$pkgver.tar.bz2)
+source=(install-upgrade-kernel-ext-usb.tar.bz2)
 docs=("readme" "copying" "authors")
 options=('nosrcpack')
 
@@ -21,7 +21,7 @@ slackdesc=\
 
 
 build() {
-	cd $startdir/src/$pkgname-$pkgver
+	cd $startdir/src/$pkgname
 	./compile.sh
 	DESTDIR=$startdir/pkg ./install.sh
 }
