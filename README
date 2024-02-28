@@ -7,8 +7,11 @@ stable and current slackware version, without removing the
 previous kernel, in slackel installed on external usb or ssd disk.
 
 To download and create the package type:
+mkdir build 
+cd build 
 git clone https://github.com/djemos/install-upgrade-kernel-ext-usb.git
-cd install-upgrade-kernel-ext-usb
+mv install-upgrade-kernel-ext-usb/SLKBUILD ./
+tar -cvjSf install-upgrade-kernel-ext-usb.tar.bz2 install-upgrade-kernel-ext-usb
 fakeroot slkbuild -X
 
 To install the package type:
