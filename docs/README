@@ -1,0 +1,6 @@
+install-upgrade-kernel-ext-usb is a script that make easy to install kernel packages 
+without removing the previous kernel packages and 
+upgrading grub menus boot loader in slackel installed on external usb or ssd disk.
+
+install-upgarade-kernel-ext-usb can be used on any slackware or slackware based
+system. 

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Categories=Application;System
+Exec=install-upgrade-kernel-ext-usb
+Icon=install-upgrade-kernel-ext-usb
+_Name=install upgrade kernel-ext-usb
+Terminal=true
+Type=Application
+Version=1.1.0
+
+Name[el_GR]=install-upgrade-kernel-ext-usb.desktop.in

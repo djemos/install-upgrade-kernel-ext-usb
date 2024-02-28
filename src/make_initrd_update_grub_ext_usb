@@ -1,0 +1,228 @@
+#!/bin/bash
+#Copyright (C) 2022 Dimitris Tzemos <dijemos@gmail.com>
+#This program is free software: you can redistribute it and/or modify it under the terms 
+#of the GNU General Public License as published by the Free Software Foundation, 
+#either version 2 of the License, or (at your option) any later version.
+#This program is distributed in the hope that it will be useful, 
+#but WITHOUT ANY WARRANTY; without even the implied warranty 
+#of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#See the GNU General Public License at <http://www.gnu.org/licenses/> for more details.
+
+execute_script(){
+ROOTPART=$(lsblk -l -o name,mountpoint| grep /$|sed "s,\([^[:space:]]*\).*,/dev/\1,")
+ROOTNAME=$(echo $ROOTPART|sed "s,/dev/,,")
+ROOTUUID=$(lsblk -l -o name,uuid|grep ^$ROOTNAME|sed "s/[^ ]*[[:space:]]*//")
+export FSTYPE=$(lsblk -l -o name,fstype|grep ^$ROOTNAME|sed "s/[^ ]*[[:space:]]*//")
+ROOTDEVICE=/dev/$(lsblk -l -o name,pkname|grep ^$ROOTNAME|sed "s/[^ ]*[[:space:]]*//")
+
+	
+        flagf=$1
+        flagd=$2
+        flagw=$3
+	    
+	    if [ -z "$flagf" ]; then
+			#export flagf="ext4"
+			export flagf=$FSTYPE
+	    elif [ "$flagf" = "ext2" ]; then
+			export flagf="ext2"
+		elif [ "$flagf" = "ext3" ]; then
+			export flagf="ext3"
+		elif [ "$flagf" = "ext4" ]; then
+			export flagf="ext4"     
+		elif [ "$flagf" = "btrfs" ]; then
+			export flagf="btrfs"
+		elif [ "$flagf" = "jfs" ]; then
+			export flagf="jfs" 
+		elif [ "$flagf" = "reiserfs" ]; then
+			export flagf="reiserfs"
+		elif [ "$flagf" = "xfs" ]; then
+			export flagf="xfs"  	
+		fi  		
+		
+		if [ -z "$flagw" ]; then
+			export WAIT=10
+		else
+	        export WAIT=$flagw
+		fi   
+				
+kv=`file -L /boot/vmlinuz | sed 's/^.*, version \([^ ]\+\) .*$/\1/'`
+
+if [ -f /etc/lsb-release ]; then
+	sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION='Slackel Linux $kv'/" /etc/lsb-release
+fi
+
+export SLACKELVERSION="Slackel Linux"
+	
+export ROOTUUID="$(findmnt -no uuid /)"
+
+hugemoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:crc32c-intel:fuse"
+genericmoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mptbase:mptscsih:mptspi:jbd2:mbcache:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
+
+(cd /boot
+rm /boot/initrd*.gz >/dev/null 2>&1
+rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
+for KERNEL in `ls vmlinuz-*-*`; do
+	if echo $KERNEL | grep huge ; then
+		INITRD=initrd-huge-${kv}.gz
+		moduleslist=$hugemoduleslist
+	else
+		INITRD=initrd-generic-${kv}.gz
+		moduleslist=$genericmoduleslist
+	fi 	
+	echo "Creating initrd $INITRD"
+mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kv -m $moduleslist >/dev/null 2>&1
+rm -rf /boot/initrd-tree/ 
+done
+)
+}
+
+UUIDify(){
+#!/bin/sh
+#
+#   UUIDify (Version 1.0):
+#
+#     UUIDify /etc/fstab entries.  Output will be written to stdout.
+#
+#
+#   Important note:
+#
+#     Make sure you review the output of this script before applying
+#     it to your /etc/fstab. Blindly running: UUIDify.sh >/etc/fstab
+#     would be a mistake!
+#
+
+file=${1:-/etc/fstab}
+
+if [ "$file" != "-" ] && [ -r "$file" ]; then
+    exec < "$file"
+else
+    echo "Could not read input file: $file" 1>&2
+    exit 1
+fi
+
+if [ ! -r /run/blkid/blkid.tab ]; then
+    if [ "$( id -u )" -eq 0 ]; then
+	/sbin/blkid >/dev/null || exit 1
+    else
+	echo 'UUIDify requires a blkid cache file when run by a non-superuser id.' 1>&2
+	echo 'Please run blkid as root user and re-run.' 1>&2
+	exit 1
+    fi
+fi
+
+while read fs_spec rest
+do
+    case "$fs_spec" in
+	/dev/sd*|/dev/nvme*) uuid_spec=$( /sbin/blkid -s UUID "$fs_spec" )
+		 uuid_spec=${uuid_spec#*: }
+		 uuid_spec=${uuid_spec//\"/}
+		 if [ "$uuid_spec" ]; then
+		     printf "%-44s %s\n" "$uuid_spec" "$rest"
+		 else
+		     printf "%-44s %s\n" "$fs_spec" "$rest"
+		 fi
+		 ;;
+	\#*)     printf "%s\n" "$fs_spec $rest" ;;
+	*)       printf "%-44s %s\n" "$fs_spec" "$rest" ;;
+    esac
+done
+
+################################################################# End. #
+
+}
+
+update_fstab(){
+echo "updating fstab"	
+
+if [ ! -f /etc/fstab.orig ]; then
+	cp /etc/fstab /etc/fstab.orig
+fi
+	UUIDify > /tmp/dummy
+	mv /tmp/dummy /etc/fstab	
+}
+
+generate_grub_cfg(){
+echo "Creating /boot/grub/grub.cfg"	
+cat << EOF > /boot/grub/grub.cfg
+#set menu_color_normal=white/black
+#set menu_color_highlight=white/blue
+
+#terminal_output console
+set timeout=10
+#play 480 262 1 330 1 392 1 523 1
+### BEGIN background setup ###
+function load_video {
+  if [ x = xy ]; then
+    insmod all_video
+  else
+    insmod efi_gop
+    insmod efi_uga
+    insmod ieee1275_fb
+    insmod vbe
+    insmod vga
+    insmod video_bochs
+    insmod video_cirrus
+  fi
+}
+set menu_color_normal=white/black
+set menu_color_highlight=white/blue
+
+insmod part_gpt
+insmod ext2
+search --no-floppy --fs-uuid --set=root $ROOTUUID
+
+if loadfont /boot/grub/fonts/unicode.pf2 ; then
+  set gfxmode=auto
+  load_video
+  insmod gfxterm
+  set locale_dir=/boot/grub/locale
+  set lang=en_US
+  insmod gettext
+fi
+
+terminal_output gfxterm
+insmod part_gpt
+insmod ext2
+
+search --no-floppy --fs-uuid --set=root $ROOTUUID
+insmod png
+background_image -m stretch /boot/grub/slackel.png
+EOF
+(cd /boot
+for KERNEL in `ls vmlinuz-*-*`; do
+
+	if echo $KERNEL | grep huge ; then
+		kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+		INITRD=initrd-huge-${kvv}.gz
+	else
+		kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+		INITRD=initrd-generic-${kvv}.gz
+	fi 
+	
+echo "
+menuentry 'Boot $SLACKELVERSION kernel ${KERNEL}' {
+	echo "Starting $SLACKELVERSION kernel ${KERNEL}.  Please wait..."
+	insmod part_gpt
+	insmod part_msdos
+	insmod btrfs
+	insmod f2fs
+	insmod ext2
+	insmod jfs
+	insmod reiserfs
+	insmod xfs
+	insmod all_video
+	search --fs-uuid --set=root $ROOTUUID
+	linux /boot/${KERNEL} root=UUID=$ROOTUUID ro
+	initrd /boot/$INITRD
+}
+" >> /boot/grub/grub.cfg
+done
+)
+
+sed -i "/GRUB_DISABLE_OS_PROBER/s/.*/GRUB_DISABLE_OS_PROBER=true/" /etc/default/grub
+}
+
+execute_script
+update_fstab
+generate_grub_cfg
+echo "All jobs done."
