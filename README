@@ -1,5 +1,5 @@
 # install-upgrade-kernel-ext-usb 
-install/upgrade huge or generic kernel on external usb or ssd disk, creating an initrd.gz for boot and also run update-grub in the end
+install/upgrade generic kernel on external usb or ssd disk, creating an initrd.gz for boot and also run update-grub in the end
 install-upgrade-kernel-ext-usb (script for installing kernel packages)
 install-upgrade-kernel-ext-usb is a script for installing, updating,
 kernel packages on all versions of salix/slackel, including
@@ -23,9 +23,8 @@ sudo install-upgrade-kernel with no parameters will get the following help scree
 USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [huge|generic] [10] [ext4]
 
 OPTIONS:
-   install     Install huge or generic kernel
-   upgrade     Upgrade huge or generic kernel removing the old one
-   huge        Download huge kernel and also create an initrd
+   install     Install generic kernel
+   upgrade     Upgrade generic kernel removing the old one
    generic     Download generic kernel and also create an initrd
    10       Time in seconds to wait for usb to add to the initrd
    ext4      Filesystem of installed system, default ext4
