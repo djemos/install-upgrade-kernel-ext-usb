@@ -6,6 +6,6 @@ Name=install upgrade kernel-ext-usb
 Name[el]=εγκατάσταση ενημέρωση πυρήνα σε εξωτερικό USB δίσκο
 Terminal=true
 Type=Application
-Version=1.1.0
+Version=3.0
 
 Name[el_GR]=install-upgrade-kernel-ext-usb.desktop.in
