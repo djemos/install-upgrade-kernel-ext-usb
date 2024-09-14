@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-04 17:41+0200\n"
+"POT-Creation-Date: 2024-09-13 14:06+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Dimitris Tzemos <dijemos@gmail.com>\n"
 "Language-Team: \n"
@@ -10,16 +10,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: src/install-upgrade-kernel-ext-usb:65
 #, sh-format
 msgid ""
-"USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [huge|generic] [10] "
-"[ext4] [/dev/sdb1]"
+"USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [generic] [10] [ext4]"
 msgstr ""
-"USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [huge|generic] [10] "
+"USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [generic] [10] "
 "[ext4] [/dev/sdb1]"
 
 #: src/install-upgrade-kernel-ext-usb:67
@@ -29,41 +28,31 @@ msgstr "   ΕΠΙΛΟΓΕΣ:"
 
 #: src/install-upgrade-kernel-ext-usb:68
 #, sh-format
-msgid "   install     Install huge or generic kernel"
-msgstr "   install  Εγκατάσταση huge ή generic πυρήνα"
+msgid "   install     Install generic kernel"
+msgstr "   install  Εγκατάσταση generic πυρήνα"
 
 #: src/install-upgrade-kernel-ext-usb:69
 #, sh-format
-msgid "   upgrade     Upgrade huge or generic kernel removing the old one"
-msgstr "   upgrade  Αναβάθμιση huge ή generic πυρήνα απεγκαθιστώντας τον παλιό"
+msgid "   upgrade     Upgrade generic kernel removing the old one"
+msgstr "   upgrade  Αναβάθμιση generic πυρήνα απεγκαθιστώντας τον παλιό"
 
 #: src/install-upgrade-kernel-ext-usb:70
-#, sh-format
-msgid "   huge        Download huge kernel and also create an initrd"
-msgstr "   huge     Λήψη huge πυρήνα και επίσης δημιούργησε το initrd"
-
-#: src/install-upgrade-kernel-ext-usb:71
 #, sh-format
 msgid "   generic     Download generic kernel and also create an initrd"
 msgstr "   generic  Λήψη generic πυρήνα και επίσης δημιούργησε το initrd"
 
-#: src/install-upgrade-kernel-ext-usb:72
+#: src/install-upgrade-kernel-ext-usb:71
 #, sh-format
 msgid "   10       Time in seconds to wait for usb to add to the initrd"
 msgstr ""
 "   10       Χρόνος σε δευτερ. να περιμένει για το usb να προστεθεί στο initrd"
 
-#: src/install-upgrade-kernel-ext-usb:73
+#: src/install-upgrade-kernel-ext-usb:72
 #, sh-format
 msgid "   ext4      Filesystem of installed system, default ext4"
 msgstr "   ext4     Τύπος αρχείων εγκατεστημένου συστήματος, εξ' ορισμού ext4"
 
-#: src/install-upgrade-kernel-ext-usb:74
-#, sh-format
-msgid "   /dev/sdb1   Partition, default /dev/sdb1"
-msgstr "   /dev/sdb1   Διαμέρισμα, εξ' ορισμού /dev/sdb1"
-
-#: src/install-upgrade-kernel-ext-usb:87
+#: src/install-upgrade-kernel-ext-usb:90
 #, sh-format
 msgid "ERROR: Too many arguments"
 msgstr "ΛΑΘΟΣ: Πάρα πολλές παράμετροι"
@@ -71,6 +60,14 @@ msgstr "ΛΑΘΟΣ: Πάρα πολλές παράμετροι"
 #: install-upgrade-kernel-ext-usb.desktop.in.h:1
 msgid "install upgrade kernel-ext-usb"
 msgstr "εγκατάσταση ενημέρωση πυρήνα σε εξωτερικό USB δίσκο"
+
+#, sh-format
+#~ msgid "   huge        Download huge kernel and also create an initrd"
+#~ msgstr "   huge     Λήψη huge πυρήνα και επίσης δημιούργησε το initrd"
+
+#, sh-format
+#~ msgid "   /dev/sdb1   Partition, default /dev/sdb1"
+#~ msgstr "   /dev/sdb1   Διαμέρισμα, εξ' ορισμού /dev/sdb1"
 
 #, sh-format
 #~ msgid "   huge    \tDownload huge kernel"

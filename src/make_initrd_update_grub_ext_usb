@@ -55,22 +55,21 @@ export SLACKELVERSION="Slackel Linux"
 	
 export ROOTUUID="$(findmnt -no uuid /)"
 
-hugemoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:crc32c-intel:fuse"
+#hugemoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:crc32c-intel:fuse"
 genericmoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mptbase:mptscsih:mptspi:jbd2:mbcache:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
 
 (cd /boot
 rm /boot/initrd*.gz >/dev/null 2>&1
 rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
 for KERNEL in `ls vmlinuz-*-*`; do
-	if echo $KERNEL | grep huge ; then
-		INITRD=initrd-huge-${kv}.gz
-		moduleslist=$hugemoduleslist
-	else
-		INITRD=initrd-generic-${kv}.gz
+	if echo $KERNEL | grep generic ; then
+		#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+		kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
+		INITRD=initrd-${kvv}-generic.gz
 		moduleslist=$genericmoduleslist
 	fi 	
 	echo "Creating initrd $INITRD"
-mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kv -m $moduleslist >/dev/null 2>&1
+mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kvv -m $moduleslist >/dev/null 2>&1
 rm -rf /boot/initrd-tree/ 
 done
 )
@@ -191,12 +190,10 @@ EOF
 (cd /boot
 for KERNEL in `ls vmlinuz-*-*`; do
 
-	if echo $KERNEL | grep huge ; then
-		kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-		INITRD=initrd-huge-${kvv}.gz
-	else
-		kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-		INITRD=initrd-generic-${kvv}.gz
+	if echo $KERNEL | grep generic ; then
+		#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+		kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
+		INITRD=initrd-${kvv}-generic.gz
 	fi 
 	
 echo "

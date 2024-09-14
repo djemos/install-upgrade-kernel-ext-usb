@@ -62,12 +62,11 @@ init(){
 }
 
 usage(){
-        echo "`eval_gettext 'USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [huge|generic] [10] [ext4]'`"
+        echo "`eval_gettext 'USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [generic] [10] [ext4]'`"
         echo
         echo "`eval_gettext '   OPTIONS:'`"
-        echo "`eval_gettext '   install     Install huge or generic kernel'`"
-        echo "`eval_gettext '   upgrade     Upgrade huge or generic kernel removing the old one'`"
-        echo "`eval_gettext '   huge        Download huge kernel and also create an initrd'`"
+        echo "`eval_gettext '   install     Install generic kernel'`"
+        echo "`eval_gettext '   upgrade     Upgrade generic kernel removing the old one'`"
         echo "`eval_gettext '   generic     Download generic kernel and also create an initrd'`"
         echo "`eval_gettext '   10       Time in seconds to wait for usb to add to the initrd'`"
         echo "`eval_gettext '   ext4      Filesystem of installed system, default ext4'`"
@@ -103,8 +102,6 @@ ROOTDEVICE=/dev/$(lsblk -l -o name,pkname|grep ^$ROOTNAME|sed "s/[^ ]*[[:space:]
         #if switch is unknown or if asking for help
 		if [[ $flagr = "help" ]] || [[ $flag = "h" ]]; then
 			usage  
-		elif [[ $flagr = "huge" ]]; then
-			export flagr="huge"
 	    elif [[ $flagr = "generic" ]]; then
 			export flagr="generic"
 		else
@@ -149,7 +146,7 @@ export ROOTUUID="$(findmnt -no uuid /)"
 
 #moduleslist="squashfs:overlay:loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:jbd2:mbcache:crc32c-intel:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
 #moduleslist="xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:hid:usbhid:i2c-hid:hid_generic:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:jbd2:mbcache:crc32c-intel:ext4"
-hugemoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:crc32c-intel:fuse"
+#hugemoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:crc32c-intel:fuse"
 genericmoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mptbase:mptscsih:mptspi:jbd2:mbcache:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
 
 #clear
@@ -160,33 +157,19 @@ sudo slapt-get --clean
 sudo slapt-get -u
 if [ "$flagr" == "generic" ]; then
 	if [ `uname -m` == "x86_64" ]; then
-		slapt-get -i --reinstall -d kernel-headers kernel-generic kernel-modules
+		slapt-get -i --reinstall -d kernel-headers kernel-generic
 	else
-		slapt-get -i --reinstall -d kernel-headers kernel-generic kernel-generic-smp kernel-modules kernel-modules-smp
-	fi
-elif [ "$flagr" == "huge" ]; then
-	if [ `uname -m` == "x86_64" ]; then
-		slapt-get -i --reinstall -d kernel-headers kernel-huge kernel-modules
-	else
-		slapt-get -i --reinstall -d kernel-headers kernel-huge kernel-huge-smp kernel-modules kernel-modules-smp
+		slapt-get -i --reinstall -d kernel-headers kernel-generic
 	fi
 fi
 
 if [ `uname -m` == "x86_64" ]; then
 	cp `find /var/slapt-get/ -type f -name "kernel-headers*"` $packagesdirectory
-	cp `find /var/slapt-get/ -type f -name "kernel-modules*"` $packagesdirectory
 	if [ "$flagr" == "generic" ]; then
 		cp `find /var/slapt-get/ -type f -name "kernel-generic*"` $packagesdirectory
-	elif  [ "$flagr" == "huge" ]; then
-		cp `find /var/slapt-get/ -type f -name "kernel-huge*"` $packagesdirectory
 	fi	
 	
-	if [ "$flagr" == "huge" ]; then
-		cd $packagesdirectory
-		f=`ls kernel-huge*.txz`
-		kv=`echo $f | cut -d'-' -f 3`
-		cd $startdir
-	elif [ "$flagr" == "generic" ]; then
+	if [ "$flagr" == "generic" ]; then
 		cd $packagesdirectory
 		f=`ls kernel-generic*.txz`
 		kv=`echo $f | cut -d'-' -f 3`
@@ -194,22 +177,14 @@ if [ `uname -m` == "x86_64" ]; then
 	fi
 else
 	cp `find /var/slapt-get/ -type f -name "kernel-headers*"` $packagesdirectory
-	cp `find /var/slapt-get/ -type f -name "kernel-modules*"` $packagesdirectory
 	if [ "$flagr" == "generic" ]; then
 		cp `find /var/slapt-get/ -type f -name "kernel-generic*"` $packagesdirectory
-	elif [ "$flagr" == "huge" ]; then
-		cp `find /var/slapt-get/ -type f -name "kernel-huge*"` $packagesdirectory
 	fi
 	
-	if [ "$flagr" == "huge" ]; then
+	if [ "$flagr" == "generic" ]; then
 		cd $packagesdirectory
-		f=`ls kernel-huge-smp*.txz`
-		kv=`echo $f | cut -d'-' -f 4`
-		cd $startdir
-	elif [ "$flagr" == "generic" ]; then
-		cd $packagesdirectory
-		f=`ls kernel-generic-smp*.txz`
-		kv=`echo $f | cut -d'-' -f 4`
+		f=`ls kernel-generic*.txz`
+		kv=`echo $f | cut -d'-' -f 3`
 		cd $startdir
 	fi
 fi
@@ -223,16 +198,14 @@ export SLACKELVERSION="Slackel Linux"
 if [ "$flag" == "install" ]; then
 	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
 	installpkg $packagesdirectory/*
-	export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | sed s/^[^0-9]*//`
+	#export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | sed s/^[^0-9]*//`
+	export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | cut -f2 -d'-'`
 	(cd /boot
 	for KERNEL in `ls vmlinuz-*-*`; do
-		if echo $KERNEL | grep huge ; then
-			kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-			INITRD=initrd-huge-${kvv}.gz
-			moduleslist=$hugemoduleslist
-		else
-			kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-			INITRD=initrd-generic-${kvv}.gz
+		if echo $KERNEL | grep generic ; then
+			#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+			kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
+			INITRD=initrd-${kvv}-generic.gz
 			moduleslist=$genericmoduleslist
 		fi
 		echo "Creating initrd $INITRD"
@@ -245,17 +218,15 @@ if [ "$flag" == "install" ]; then
 elif [ "$flag" == "upgrade" ]; then
 	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
 	upgradepkg $packagesdirectory/*
-	export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | sed s/^[^0-9]*//`
+	#export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | sed s/^[^0-9]*//`
+	export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | cut -f2 -d'-'`
 	(cd /boot
 	rm /boot/initrd*.gz >/dev/null 2>&1
 	for KERNEL in `ls vmlinuz-*-*`; do
-		if echo $KERNEL | grep huge ; then
-		    kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-			INITRD=initrd-huge-${kvv}.gz
-			moduleslist=$hugemoduleslist
-		else
-			kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-			INITRD=initrd-generic-${kvv}.gz
+		if echo $KERNEL | grep generic ; then
+			#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+			kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
+			INITRD=initrd-${kvv}-generic.gz
 			moduleslist=$genericmoduleslist
 		fi
 		echo "Creating initrd $INITRD"
@@ -384,12 +355,10 @@ EOF
 (cd /boot
 for KERNEL in `ls vmlinuz-*-*`; do
 
-	if echo $KERNEL | grep huge ; then
-		kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-		INITRD=initrd-huge-${kvv}.gz
-	else
-		kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-		INITRD=initrd-generic-${kvv}.gz
+	if echo $KERNEL | grep generic ; then
+		#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+		kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
+		INITRD=initrd-${kvv}-generic.gz
 	fi 
 	
 echo "

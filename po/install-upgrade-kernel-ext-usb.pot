@@ -8,20 +8,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-04 18:22+0200\n"
+"POT-Creation-Date: 2024-09-13 14:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/install-upgrade-kernel-ext-usb:65
 #, sh-format
 msgid ""
-"USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [huge|generic] [10] "
-"[ext4] [/dev/sdb1]"
+"USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [generic] [10] [ext4]"
 msgstr ""
 
 #: src/install-upgrade-kernel-ext-usb:67
@@ -31,40 +30,30 @@ msgstr ""
 
 #: src/install-upgrade-kernel-ext-usb:68
 #, sh-format
-msgid "   install     Install huge or generic kernel"
+msgid "   install     Install generic kernel"
 msgstr ""
 
 #: src/install-upgrade-kernel-ext-usb:69
 #, sh-format
-msgid "   upgrade     Upgrade huge or generic kernel removing the old one"
+msgid "   upgrade     Upgrade generic kernel removing the old one"
 msgstr ""
 
 #: src/install-upgrade-kernel-ext-usb:70
 #, sh-format
-msgid "   huge        Download huge kernel and also create an initrd"
+msgid "   generic     Download generic kernel and also create an initrd"
 msgstr ""
 
 #: src/install-upgrade-kernel-ext-usb:71
 #, sh-format
-msgid "   generic     Download generic kernel and also create an initrd"
+msgid "   10       Time in seconds to wait for usb to add to the initrd"
 msgstr ""
 
 #: src/install-upgrade-kernel-ext-usb:72
 #, sh-format
-msgid "   10       Time in seconds to wait for usb to add to the initrd"
-msgstr ""
-
-#: src/install-upgrade-kernel-ext-usb:73
-#, sh-format
 msgid "   ext4      Filesystem of installed system, default ext4"
 msgstr ""
 
-#: src/install-upgrade-kernel-ext-usb:74
-#, sh-format
-msgid "   /dev/sdb1   Partition, default /dev/sdb1"
-msgstr ""
-
-#: src/install-upgrade-kernel-ext-usb:87
+#: src/install-upgrade-kernel-ext-usb:90
 #, sh-format
 msgid "ERROR: Too many arguments"
 msgstr ""
