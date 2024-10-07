@@ -38,7 +38,7 @@ AUTHOR='Dimitris Tzemos - dijemos@gmail.com'
 LICENCE='GPL v3+'
 SCRIPT=$(basename "$0")
 SCRIPT=$(readlink -f "$SCRIPT")
-VER=2.0
+VER=4.0
 
 init(){
 
