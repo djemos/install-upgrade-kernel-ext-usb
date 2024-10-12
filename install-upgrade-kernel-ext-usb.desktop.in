@@ -6,4 +6,5 @@ _Name=install upgrade kernel-ext-usb
 Terminal=true
 Type=Application
 Version=4.0
+
 Name[el_GR]=install-upgrade-kernel-ext-usb.desktop.in

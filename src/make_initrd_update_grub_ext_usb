@@ -1,5 +1,5 @@
 #!/bin/bash
-#Copyright (C) 2022-2024 Dimitris Tzemos <dijemos@gmail.com>
+#Copyright (C) 2022 Dimitris Tzemos <dijemos@gmail.com>
 #This program is free software: you can redistribute it and/or modify it under the terms 
 #of the GNU General Public License as published by the Free Software Foundation, 
 #either version 2 of the License, or (at your option) any later version.
@@ -56,7 +56,8 @@ export SLACKELVERSION="Slackel Linux"
 export ROOTUUID="$(findmnt -no uuid /)"
 
 #hugemoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:crc32c-intel:fuse"
-genericmoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mptbase:mptscsih:mptspi:jbd2:mbcache:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
+#moduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mptbase:mptscsih:mptspi:jbd2:mbcache:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
+moduleslist="squashfs:overlay:loop:efivarfs:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mbcache:jbd2:mptscsih:mptspi:jbd:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs:exfat:virtio_ring:virtio:virtio_blk:virtio_balloon:virtio_pci:virtio_pci_modern_dev:virtio_net:zstd_compress:lz4hc_compress:lz4_compress:rtsx_pci:rtsx_pci_sdmmc:uas"
 
 (cd /boot
 rm /boot/initrd*.gz >/dev/null 2>&1
@@ -66,7 +67,7 @@ for KERNEL in `ls vmlinuz-*-*`; do
 		#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
 		kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
 		INITRD=initrd-${kvv}-generic.gz
-		moduleslist=$genericmoduleslist
+		moduleslist=$moduleslist
 	fi 	
 	echo "Creating initrd $INITRD"
 mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kvv -m $moduleslist >/dev/null 2>&1

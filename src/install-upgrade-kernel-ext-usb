@@ -80,6 +80,8 @@ ROOTNAME=$(echo $ROOTPART|sed "s,/dev/,,")
 ROOTUUID=$(lsblk -l -o name,uuid|grep ^$ROOTNAME|sed "s/[^ ]*[[:space:]]*//")
 export FSTYPE=$(lsblk -l -o name,fstype|grep ^$ROOTNAME|sed "s/[^ ]*[[:space:]]*//")
 ROOTDEVICE=/dev/$(lsblk -l -o name,pkname|grep ^$ROOTNAME|sed "s/[^ ]*[[:space:]]*//")
+#PREV_GRUB_DISABLE_OS_PROBER=$(grep 'GRUB_DISABLE_OS_PROBER' /etc/default/grub | cut -d  '=' -f 2)
+#sed -i "s/GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=\"true\"/g" /etc/default/grub >/dev/null 2>&1
 
         flag=$1
         flagr=$2
@@ -144,10 +146,10 @@ fi
 
 export ROOTUUID="$(findmnt -no uuid /)"
 
-#moduleslist="squashfs:overlay:loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:jbd2:mbcache:crc32c-intel:ext3:ext4:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
-#moduleslist="xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:hid:usbhid:i2c-hid:hid_generic:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:jbd2:mbcache:crc32c-intel:ext4"
+
 #hugemoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:crc32c-intel:fuse"
-genericmoduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mptbase:mptscsih:mptspi:jbd2:mbcache:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
+#moduleslist="loop:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mptbase:mptscsih:mptspi:jbd2:mbcache:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs"
+moduleslist="squashfs:overlay:loop:efivarfs:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:uhci-hcd:ehci-hcd:mmc-core:mmc-block:sdhci:sdhci-pci:sdhci-acpi:usb-storage:hid:usbhid:i2c-hid:hid-generic:hid-apple:hid-asus:hid-cherry:hid-logitech:hid-logitech-dj:hid-logitech-hidpp:hid-lenovo:hid-microsoft:hid_multitouch:mbcache:jbd2:mptscsih:mptspi:jbd:crc32c_intel:crc32c_generic:fuse:ext2:ext3:ext4:xfs:reiserfs:jfs:btrfs:isofs:fat:nls_cp437:nls_iso8859-1:msdos:vfat:ntfs:exfat:virtio_ring:virtio:virtio_blk:virtio_balloon:virtio_pci:virtio_pci_modern_dev:virtio_net:zstd_compress:lz4hc_compress:lz4_compress:rtsx_pci:rtsx_pci_sdmmc:uas"
 
 #clear
 #packages_dir contain packages.txz
@@ -206,11 +208,11 @@ if [ "$flag" == "install" ]; then
 			#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
 			kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
 			INITRD=initrd-${kvv}-generic.gz
-			moduleslist=$genericmoduleslist
+			moduleslist=$moduleslist
+			echo "Creating initrd $INITRD"
+			mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kvv -m $moduleslist >/dev/null 2>&1
+			rm -rf /boot/initrd-tree/ 
 		fi
-		echo "Creating initrd $INITRD"
-		mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kvv -m $moduleslist >/dev/null 2>&1
-		rm -rf /boot/initrd-tree/ 
 	done
 	)
 	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
@@ -227,11 +229,11 @@ elif [ "$flag" == "upgrade" ]; then
 			#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
 			kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
 			INITRD=initrd-${kvv}-generic.gz
-			moduleslist=$genericmoduleslist
-		fi
-		echo "Creating initrd $INITRD"
-		mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kvv -m $moduleslist >/dev/null 2>&1
-		rm -rf /boot/initrd-tree/ 
+			moduleslist=$moduleslist
+			echo "Creating initrd $INITRD"
+			mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kvv -m $moduleslist >/dev/null 2>&1
+			rm -rf /boot/initrd-tree/
+		fi	
 	done
 	)
 	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
@@ -359,7 +361,6 @@ for KERNEL in `ls vmlinuz-*-*`; do
 		#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
 		kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
 		INITRD=initrd-${kvv}-generic.gz
-	fi 
 	
 echo "
 menuentry 'Boot $SLACKELVERSION kernel ${KERNEL}' {
@@ -378,10 +379,31 @@ menuentry 'Boot $SLACKELVERSION kernel ${KERNEL}' {
 	initrd /boot/$INITRD
 }
 " >> /boot/grub/grub.cfg
+
+   else
+   
+echo "
+menuentry 'Boot $SLACKELVERSION kernel ${KERNEL}' {
+	echo "Starting $SLACKELVERSION kernel ${KERNEL}.  Please wait..."
+	insmod part_gpt
+	insmod part_msdos
+	insmod btrfs
+	insmod f2fs
+	insmod ext2
+	insmod jfs
+	insmod reiserfs
+	insmod xfs
+	insmod all_video
+	search --fs-uuid --set=root $ROOTUUID
+	linux /boot/${KERNEL} root=UUID=$ROOTUUID ro
+}
+" >> /boot/grub/grub.cfg  
+  
+   fi
 done
 )
 
-sed -i "/GRUB_DISABLE_OS_PROBER/s/.*/GRUB_DISABLE_OS_PROBER=true/" /etc/default/grub
+sed -i "s/GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=\"true\"/" /etc/default/grub
 }
 
 init
