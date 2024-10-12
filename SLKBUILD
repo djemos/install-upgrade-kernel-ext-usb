@@ -2,7 +2,7 @@
 
 pkgname=install-upgrade-kernel-ext-usb
 pkgver=4.0
-pkgrel=4dj
+pkgrel=6dj
 arch=noarch
 source=(install-upgrade-kernel-ext-usb-$pkgver.tar.bz2)
 docs=("readme" "copying" "authors")
