@@ -1,5 +1,5 @@
 # install-upgrade-kernel-ext-usb 
-install/upgrade huge or generic kernel on external usb or ssd disk, creating an initrd.gz for boot and also run update-grub in the end
+install/upgrade generic kernel on external usb or ssd disk, creating an initrd.gz for boot and also run update-grub in the end
 install-upgrade-kernel-ext-usb (script for installing kernel packages)
 install-upgrade-kernel-ext-usb is a script for installing, updating,
 kernel packages on all versions of salix/slackel, including
@@ -7,12 +7,15 @@ stable and current slackware version, without removing the
 previous kernel, in slackel installed on external usb or ssd disk.
 
 To download and create the package type:
+mkdir build 
+cd build 
 git clone https://github.com/djemos/install-upgrade-kernel-ext-usb.git
-cd install-upgrade-kernel-ext-usb
+mv install-upgrade-kernel-ext-usb/SLKBUILD ./
+tar -cvjSf install-upgrade-kernel-ext-usb.tar.bz2 install-upgrade-kernel-ext-usb
 fakeroot slkbuild -X
 
 To install the package type:
-sudo spkg install-upgrade-kernel-ext-usb-4.0-noarch-6dj.txz
+sudo spkg install-upgrade-kernel-ext-usb-4.0-noarch-4dj.txz
 
 Running
 sudo install-upgrade-kernel with no parameters will get the following help screen.
@@ -20,15 +23,14 @@ sudo install-upgrade-kernel with no parameters will get the following help scree
 USAGE: install-upgrade-kernel-ext-usb [install|upgrade] [huge|generic] [10] [ext4]
 
 OPTIONS:
-   install     Install huge or generic kernel
-   upgrade     Upgrade huge or generic kernel removing the old one
-   huge        Download huge kernel and also create an initrd
+   install     Install generic kernel
+   upgrade     Upgrade generic kernel removing the old one
    generic     Download generic kernel and also create an initrd
    10       Time in seconds to wait for usb to add to the initrd
    ext4      Filesystem of installed system, default ext4
 
 
-Copyright (C) 2022-2024 Dimitris Tzemos <dijemos@gmail.com>
+Copyright (C) 2020-2024 Dimitris Tzemos <dijemos@gmail.com>
 This program is free software: you can redistribute it and/or modify it under the terms 
 of the GNU General Public License as published by the Free Software Foundation, 
 either version 2 of the License, or (at your option) any later version.
