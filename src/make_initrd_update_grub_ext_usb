@@ -1,5 +1,5 @@
 #!/bin/bash
-#Copyright (C) 2022 Dimitris Tzemos <dijemos@gmail.com>
+#Copyright (C) 2022 - 2024 Dimitris Tzemos <dijemos@gmail.com>
 #This program is free software: you can redistribute it and/or modify it under the terms 
 #of the GNU General Public License as published by the Free Software Foundation, 
 #either version 2 of the License, or (at your option) any later version.
@@ -62,16 +62,14 @@ moduleslist="squashfs:overlay:loop:efivarfs:xhci-pci:ohci-pci:ehci-pci:xhci-hcd:
 (cd /boot
 rm /boot/initrd*.gz >/dev/null 2>&1
 rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
-for KERNEL in `ls vmlinuz-*-*`; do
-	if echo $KERNEL | grep generic ; then
-		#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-		kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
-		INITRD=initrd-${kvv}-generic.gz
-		moduleslist=$moduleslist
-	fi 	
+for KERNEL in `ls vmlinuz-*`; do
+	#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+	kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
+	INITRD=initrd-${kvv}.gz
+	moduleslist=$moduleslist
 	echo "Creating initrd $INITRD"
-mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kvv -m $moduleslist >/dev/null 2>&1
-rm -rf /boot/initrd-tree/ 
+	mkinitrd -c -f $flagf -u -w $WAIT -o /boot/$INITRD -r UUID=$ROOTUUID -k $kvv -m $moduleslist >/dev/null 2>&1
+	rm -rf /boot/initrd-tree/ 
 done
 )
 }
@@ -189,13 +187,10 @@ insmod png
 background_image -m stretch /boot/grub/slackel.png
 EOF
 (cd /boot
-for KERNEL in `ls vmlinuz-*-*`; do
-
-	if echo $KERNEL | grep generic ; then
-		#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
-		kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
-		INITRD=initrd-${kvv}-generic.gz
-	fi 
+for KERNEL in `ls vmlinuz-*`; do
+	#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
+	kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
+	INITRD=initrd-${kvv}.gz
 	
 echo "
 menuentry 'Boot $SLACKELVERSION kernel ${KERNEL}' {
