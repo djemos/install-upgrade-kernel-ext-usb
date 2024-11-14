@@ -38,7 +38,7 @@ AUTHOR='Dimitris Tzemos - dijemos@gmail.com'
 LICENCE='GPL v3+'
 SCRIPT=$(basename "$0")
 SCRIPT=$(readlink -f "$SCRIPT")
-VER=4.0
+VER=5.0
 
 init(){
 
@@ -198,11 +198,12 @@ fi
 export SLACKELVERSION="Slackel Linux"
 
 if [ "$flag" == "install" ]; then
-	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
 	installpkg $packagesdirectory/*
 	#export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | sed s/^[^0-9]*//`
 	export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | cut -f2 -d'-'`
 	(cd /boot
+	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
+	rm -rf /boot/initrd* >/dev/null 2>&1
 	for KERNEL in `ls vmlinuz-*`; do
 		#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
 		kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
@@ -216,12 +217,12 @@ if [ "$flag" == "install" ]; then
 	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
 	rm -rf $packagesdirectory
 elif [ "$flag" == "upgrade" ]; then
-	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
 	upgradepkg $packagesdirectory/*
 	#export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | sed s/^[^0-9]*//`
 	export kv=`ls -l /boot/vmlinuz | cut -f2 -d'>' | cut -f2 -d'-'`
 	(cd /boot
-	rm /boot/initrd*.gz >/dev/null 2>&1
+	rm /boot/vmlinuz-huge /boot/vmlinuz-huge-smp /boot/vmlinuz-generic /boot/vmlinuz-generic-smp >/dev/null 2>&1
+	rm -rf /boot/initrd* >/dev/null 2>&1
 	for KERNEL in `ls vmlinuz-*`; do
 			#kvv=`echo $KERNEL | cut -f2 -d'>' | sed s/^[^0-9]*//`
 			kvv=`echo $KERNEL | cut -f2 -d'>' | cut -f2 -d'-'`
